@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title> Electron App </title>
+</head>
+
+<body>
+	<div style="text-align: center">
+		<h2> Display Application </h2>
+	</div>
+	<div style="background: lavender; display: table; width: 100%">
+		<div style="background: skyblue; display: table-cell; width: 50%;">
+			<div style="text-align: center">
+				<h3> Sensor Console </h3>
+			</div>
+			<!-- font -->
+			<textarea style="resize: none; width: 90%; display: block; margin-left: auto; margin-right: auto;" id="txtarea1" rows="15"  readonly>test</textarea>
+			<dev style="margin-left: 3%;">
+				<select id=sel_test style="height: 22pt; width:30%;"></select>
+				<button id="test_btn">更新</button>
+			</dev>
+		</div>
+
+		<div style="background: tomato; display: table-cell; width: 50%; ">
+			<div style="text-align: center">
+				<h3> MQTT Console </h3>
+			</div>
+			<textarea style="resize: none; width: 90%; display: block; margin-left: auto; margin-right: auto;" id="txtarea2" rows="15"  readonly>test</textarea>
+			<div style="width: 100%; margin-right: 0;">
+				<label style="width: 20%; margin-left: 5%">Broker:</label> <input type="text" style="width: 50%; margin-right: 5%">
+				<label style="width: 20%; margin-left: 5%">Port:</label> <input type="text" style="width: 50%; margin-right: 5%">
+				<button id="connect_btn">Connect</button>
+			</div>
+			<div style="width: 100%; margin-right: 0;"></div>
+				<label style="width: 20%; margin-left: 5%">転送開始</label>
+				<input type="checkbox">
+			</div>
+		</div>
+	</div>
+
+	
+	
+	<script defer src="index.js"></script>
+</body>
+
+</html>
