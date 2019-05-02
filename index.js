@@ -9,6 +9,7 @@ console.log('test');
 const button = document.getElementById('test_btn');
 const connectButton = document.getElementById('connect_btn');
 const txtarea = document.getElementById('txtarea1');
+const txtarea2 = document.getElementById('txtarea2');
 const sel = document.getElementById("sel_test");
 
 /*
@@ -21,13 +22,21 @@ serialPort.list(function(err, ports) {
 });
 */
 
+ipcRenderer.on("ch_mqtt_clear", function (evt){
+	txtarea2.value = "";
+});
+
+ipcRenderer.on("ch_mqtt", function (evt, msg){
+	txtarea2.value += msg;
+});
+
 ipcRenderer.on('channel-hoge', (evt, msg) => {
 	console.log("OKOKOK");
 	txtarea.value = msg;
 });
 
 connectButton.addEventListener('click', function(evt){
-	var ret = mymqtt.mqttConnect(broker.value, port.value);
+	mymqtt.mqttConnect(broker.value, port.value);
 });
 
 button.addEventListener('click', function(clickEvent){
