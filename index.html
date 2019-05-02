@@ -28,14 +28,14 @@
 			</div>
 			<textarea style="resize: none; width: 90%; display: block; margin-left: auto; margin-right: auto;" id="txtarea2" rows="15"  readonly>test</textarea>
 			<div style="width: 100%; margin-right: 0;">
-				<label style="width: 20%; margin-left: 5%">Broker:</label> <input type="text" style="width: 50%; margin-right: 5%">
-				<label style="width: 20%; margin-left: 5%">Port:</label> <input type="text" style="width: 50%; margin-right: 5%">
-				<button id="connect_btn">Connect</button>
+				<label style="width: 20%; margin-left: 5%">Broker:</label> <input id="broker" type="text" style="width: 60%; margin-right: 5%" value="localhost">
 			</div>
-			<div style="width: 100%; margin-right: 0;"></div>
-				<label style="width: 20%; margin-left: 5%">転送開始</label>
-				<input type="checkbox">
+			<div style="width: 100%; margin-right: 0;">
+				<label style="width: 20%; margin-left: 5%">Port:</label> <input id="port" type="text" style="width: 60%; margin-right: 5%" value="60000">
 			</div>
+			<button id="connect_btn">Connect</button>
+			<label style="width: 20%; margin-left: 5%">転送開始</label>
+			<input type="checkbox">
 		</div>
 	</div>
 

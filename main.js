@@ -2,7 +2,7 @@
 
 const { app, BrowserWindow } = require("electron");
 
-let mainWindow = null;
+var mainWindow = null;
 
 
 function createWindow() {
@@ -13,7 +13,11 @@ function createWindow() {
 	});
 	
 	mainWindow.loadFile("index.html");
-	//mainWindow.webContents.openDevTools();
+	mainWindow.webContents.openDevTools();
+
+	mainWindow.webContents.on('did-finish-load', () => {
+		mainWindow.webContents.send('channel-hoge', 'sendtest');
+	});
 
 	mainWindow.on('closed', function(){
 		mainWindow = null;

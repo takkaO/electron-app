@@ -1,11 +1,13 @@
 "use strict";
 
 const electron = require('electron');
+const ipcRenderer = electron.ipcRenderer;
 const remote = electron.remote;
 const mymqtt = remote.require('./mqtt.js');
 
 console.log('test');
 const button = document.getElementById('test_btn');
+const connectButton = document.getElementById('connect_btn');
 const txtarea = document.getElementById('txtarea1');
 const sel = document.getElementById("sel_test");
 
@@ -19,17 +21,21 @@ serialPort.list(function(err, ports) {
 });
 */
 
-console.log('test OK');
+ipcRenderer.on('channel-hoge', (evt, msg) => {
+	console.log("OKOKOK");
+	txtarea.value = msg;
+});
+
+connectButton.addEventListener('click', function(evt){
+	var ret = mymqtt.mqttConnect(broker.value, port.value);
+});
+
 button.addEventListener('click', function(clickEvent){
 	//log.info("Clicked");
 	//document.write("Clicked");
 	console.log('OK');
 	txtarea.value += "Clicked!おっけ～\n";
-	mymqtt.testout(function(ret){
-		console.log(ret);
-	});
-	var ret = mymqtt.mqttConnect("localhost");
-	console.log(ret);
+	
 	/*
 	serialPort.list(function(err, ports){
 		ports.forEach(function(port){
@@ -45,3 +51,4 @@ sel.addEventListener('click', function(evt){
 	op.text = "hello";
 	document.getElementById("sel_test").appendChild(op);
 });
+

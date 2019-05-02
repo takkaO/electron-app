@@ -2,15 +2,18 @@
 
 var mqtt = require("mqtt");
 
+const {remote, BrowserWindow} = require('electron');
+//const currentWindow = remote.getCurrentWindow();
+
 const test = {
 	testout: function (cb){
 		console.log("Hello");
 		return cb("OKOK");
 	},
 
-	mqttConnect: function (ip){
+	mqttConnect: function (ip, port){
 		var options = {
-			port: 60000,
+			port: port,
 			host: ip,
 			protocol: 'mqtt'
 		}
@@ -18,6 +21,11 @@ const test = {
 		client.on('connect', function (){
 			console.log("connect ok");
 			client.publish("test", "test OK");
+		});
+
+		client.on('packetsend', function (packet){
+			BrowserWindow.getFocusedWindow().webContents.send('channel-hoge', packet.payload);
+			console.log(packet.payload);
 		});
 		return "PUB_OK"
 	}
