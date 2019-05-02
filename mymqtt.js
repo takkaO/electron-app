@@ -5,9 +5,9 @@ var mqtt = require("mqtt");
 const {remote, BrowserWindow} = require('electron');
 //const currentWindow = remote.getCurrentWindow();
 var client;
-var hoge = BrowserWindow.getFocusedWindow();
+var mainWindow = BrowserWindow.getFocusedWindow();
 
-const test = {
+const mqttUtils = {
 	testout: function (){
 		console.log("Hello");
 		client.publish("test", "test OK");
@@ -19,23 +19,24 @@ const test = {
 			port: port,
 			host: ip,
 			protocol: 'mqtt'
-		}
+		};
 		client = mqtt.connect(options);
+
 		client.on('connect', function (){
-			console.log("connect ok");
-			hoge.webContents.send('ch_mqtt_clear');
+			//console.log("connect ok");
+			mainWindow.webContents.send('ch_mqtt_clear');
 			var msg = "[Info] Success to Connect broker!\n";
 			msg += "Host     : " + options.host + "\n";
 			msg += "Port     : " + options.port + "\n";
 			msg += "Protocol : " + options.protocol + "\n";
 			msg += "----------\n";
-			hoge.webContents.send('ch_mqtt', msg);
+			mainWindow.webContents.send('ch_mqtt', msg);
 			//client.publish("test", "test OK");
-			//setInterval(test.testout, 1000);
+			//setInterval(mqttUtils.testout, 1000);
 		});
 
 		client.on('packetsend', function (packet){
-			console.log(packet);
+			//console.log(packet);
 			if (packet.cmd !== "publish"){
 				// publish以外はスルー
 				return;
@@ -46,11 +47,11 @@ const test = {
 			msg += "Payload: " + packet.payload + "\n";
 			msg += "----------\n"
 			//console.log(BrowserWindow.getAllWindows());
-			hoge.webContents.send('ch_mqtt', msg);
+			mainWindow.webContents.send('ch_mqtt', msg);
 			//console.log(packet.payload);
 		});
 		return "PUB_OK"
 	}
 };
 
-module.exports = test;
+module.exports = mqttUtils;

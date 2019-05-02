@@ -3,24 +3,17 @@
 const electron = require('electron');
 const ipcRenderer = electron.ipcRenderer;
 const remote = electron.remote;
-const mymqtt = remote.require('./mqtt.js');
+const mymqtt = remote.require('./mymqtt.js');
+const myserial = remote.require('./myserial.js');
 
-console.log('test');
+
 const button = document.getElementById('test_btn');
 const connectButton = document.getElementById('connect_btn');
 const txtarea = document.getElementById('txtarea1');
 const txtarea2 = document.getElementById('txtarea2');
 const sel = document.getElementById("sel_test");
 
-/*
-const serialPort = require("serialport");
-serialPort.list(function(err, ports) {
-	console.log(ports);
-	ports.forEach(function(port){
-	  console.log(port);
-	});
-});
-*/
+
 
 ipcRenderer.on("ch_mqtt_clear", function (evt){
 	txtarea2.value = "";
@@ -30,9 +23,12 @@ ipcRenderer.on("ch_mqtt", function (evt, msg){
 	txtarea2.value += msg;
 });
 
-ipcRenderer.on('channel-hoge', (evt, msg) => {
-	console.log("OKOKOK");
-	txtarea.value = msg;
+ipcRenderer.on("ch_serialport_info", function (evt, ports){
+	ports.forEach((port) => {
+		// 選択欄に追加
+		txtarea.value += port.comName;
+	});
+	
 });
 
 connectButton.addEventListener('click', function(evt){
@@ -44,14 +40,8 @@ button.addEventListener('click', function(clickEvent){
 	//document.write("Clicked");
 	console.log('OK');
 	txtarea.value += "Clicked!おっけ～\n";
-	
-	/*
-	serialPort.list(function(err, ports){
-		ports.forEach(function(port){
-			console.log(port);
-		});
-	});
-	*/
+
+	myserial.fetchSerialPortInfo();
 });
 
 sel.addEventListener('click', function(evt){
