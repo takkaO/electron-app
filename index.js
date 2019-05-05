@@ -14,11 +14,14 @@ const txtarea = document.getElementById('txtarea1');
 const txtarea2 = document.getElementById('txtarea2');
 const sel = document.getElementById("sel_test");
 const selBaudRate = document.getElementById("sel_baudrate");
+const transButton = document.getElementById('trans');
 
+var trans_flag = false;
 let op = document.createElement("option");
 op.value = "None";
 op.text = "None";
 document.getElementById("sel_test").appendChild(op);
+
 
 ipcRenderer.on("ch_serialport_show", function (evt, msg){
 	// myserial側でメッセージを構築するようにする
@@ -74,9 +77,19 @@ ipcRenderer.on("ch_serialport_info", function (evt, ports){
 	
 });
 
-connectButton.addEventListener('click', function(evt){
-	mymqtt.mqttConnect(broker.value, port.value);
+connectButton.addEventListener('change', function (){
+	if (this.checked){
+		//mymqtt.mqttConnect(broker.value, port.value);
+		transButton.disabled = false;
+	}
+	else{
+		// MQTT disconnect もほしい
+		transButton.checked = false;
+		trans_flag = false;
+		transButton.disabled = true;
+	}
 });
+
 
 button.addEventListener('click', function(clickEvent){
 	//log.info("Clicked");
@@ -112,6 +125,15 @@ serialButton.addEventListener('change', function(){
 		selBaudRate.disabled = false;
 	}
 	
+});
+
+transButton.addEventListener('change', function (){
+	if (this.checked){
+		trans_flag = true;
+	}
+	else{
+		trans_flag = false;
+	}
 });
 
 // window読み込み完了時に呼び出し
