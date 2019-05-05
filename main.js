@@ -14,7 +14,7 @@ function createWindow() {
 	
 	mainWindow.loadFile("index.html");
 	// Dev tool を自動起動
-	//mainWindow.webContents.openDevTools();
+	mainWindow.webContents.openDevTools();
 
 	mainWindow.webContents.on('did-finish-load', () => {
 		mainWindow.webContents.send('channel-hoge', 'sendtest');
