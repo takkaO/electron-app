@@ -3,7 +3,6 @@
 var mqtt = require("mqtt");
 
 const {remote, BrowserWindow} = require('electron');
-//const currentWindow = remote.getCurrentWindow();
 var client;
 var mainWindow = BrowserWindow.getFocusedWindow();
 
@@ -14,7 +13,7 @@ const mqttUtils = {
 		return "OKOK";
 	},
 
-	mqttConnect: function (ip, port){
+	Connect: function (ip, port){
 		var options = {
 			port: port,
 			host: ip,
@@ -25,7 +24,7 @@ const mqttUtils = {
 		client.on('connect', function (){
 			//console.log("connect ok");
 			mainWindow.webContents.send('ch_mqtt_clear');
-			var msg = "[Info] Success to Connect broker!\n";
+			var msg = "[Info] Successful connect to broker!\n";
 			msg += "Host     : " + options.host + "\n";
 			msg += "Port     : " + options.port + "\n";
 			msg += "Protocol : " + options.protocol + "\n";
@@ -33,6 +32,11 @@ const mqttUtils = {
 			mainWindow.webContents.send('ch_mqtt', msg);
 			//client.publish("test", "test OK");
 			//setInterval(mqttUtils.testout, 1000);
+		});
+
+		client.on('end', function (){
+			var msg = "[Info] Disconnect from broker.\n";
+			mainWindow.webContents.send('ch_mqtt', msg);
 		});
 
 		client.on('packetsend', function (packet){
@@ -50,7 +54,21 @@ const mqttUtils = {
 			mainWindow.webContents.send('ch_mqtt', msg);
 			//console.log(packet.payload);
 		});
-		return "PUB_OK"
+	},
+
+	Disconnect: function (){
+		console.log(client.connected);
+		if (client.connected === true){
+			client.end();
+		}
+	},
+
+	Publish: function (topic, payload){
+		client.publish(topic, payload);
+	},
+
+	IsConnected: function (){
+		return client.connected;
 	}
 };
 

@@ -5,6 +5,7 @@ const ipcRenderer = electron.ipcRenderer;
 const remote = electron.remote;
 const mymqtt = remote.require('./mymqtt.js');
 const myserial = remote.require('./myserial.js');
+const myparser = remote.require('./parser.js');
 
 
 const button = document.getElementById('test_btn');
@@ -15,6 +16,7 @@ const txtarea2 = document.getElementById('txtarea2');
 const sel = document.getElementById("sel_test");
 const selBaudRate = document.getElementById("sel_baudrate");
 const transButton = document.getElementById('trans');
+const testPubButton = document.getElementById('testpub_btn');
 
 var trans_flag = false;
 let op = document.createElement("option");
@@ -38,6 +40,15 @@ ipcRenderer.on("ch_serialport_show", function (evt, msg){
 	// 転送するかチェック
 	// もしオンならデータパーサー.jsでreturnをもらう
 	// MQTT側へ送信
+	if(mymqtt.IsConnected() === false){
+		return;
+	}
+	if (trans_flag === false){
+		return;
+	}
+	//console.log("Parse");
+	var data = myparser.testout(msg);
+	mymqtt.Publish(data.topic, data.payload);
 });
 
 ipcRenderer.on("ch_mqtt_clear", function (evt){
@@ -45,7 +56,14 @@ ipcRenderer.on("ch_mqtt_clear", function (evt){
 });
 
 ipcRenderer.on("ch_mqtt", function (evt, msg){
+	// TODO: 最大履歴管理
+	if (txtarea2.value.length > 10000){
+		var len = txtarea2.value.length - 10000;
+		var hoge = txtarea2.value;
+		txtarea2.value = hoge.slice(len);
+	}
 	txtarea2.value += msg;
+	txtarea2.scrollTop = txtarea2.scrollHeight;
 });
 
 ipcRenderer.on("ch_serialport_info", function (evt, ports){
@@ -79,11 +97,12 @@ ipcRenderer.on("ch_serialport_info", function (evt, ports){
 
 connectButton.addEventListener('change', function (){
 	if (this.checked){
-		//mymqtt.mqttConnect(broker.value, port.value);
+		mymqtt.Connect(broker.value, Number(port.value));
 		transButton.disabled = false;
 	}
 	else{
 		// MQTT disconnect もほしい
+		mymqtt.Disconnect();
 		transButton.checked = false;
 		trans_flag = false;
 		transButton.disabled = true;
@@ -92,11 +111,6 @@ connectButton.addEventListener('change', function (){
 
 
 button.addEventListener('click', function(clickEvent){
-	//log.info("Clicked");
-	//document.write("Clicked");
-	//console.log('OK');
-	//txtarea.value += "Clicked!おっけ～\n";
-
 	myserial.fetchSerialPortInfo();
 });
 
@@ -134,6 +148,10 @@ transButton.addEventListener('change', function (){
 	else{
 		trans_flag = false;
 	}
+});
+
+testPubButton.addEventListener("click", function(){
+	mymqtt.Publish("test", "testPubOK");
 });
 
 // window読み込み完了時に呼び出し

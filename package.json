@@ -13,7 +13,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/.bin/electron.cmd .",
-    "build": "npm rebuild && ./node_modules/.bin/electron-rebuild"
+    "set_env": "npm install --vs2015 -g windows-build-tools",
+    "mybuild": "./node_modules/.bin/electron-rebuild"
   },
   "keywords": [],
   "author": "",
