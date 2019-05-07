@@ -16,7 +16,8 @@ const mqttUtils = {
 		var options = {
 			port: port,
 			host: ip,
-			protocol: 'mqtt'
+			protocol: 'mqtt',
+			connectTimeout: 5000
 		};
 		client = mqtt.connect(options);
 
@@ -35,6 +36,15 @@ const mqttUtils = {
 		client.on('end', function (){
 			var msg = "Disconnect from broker.\n";
 			mainWindow.webContents.send('ch_mqtt', "disconnect", msg);
+		});
+
+		client.on('error', function (err){
+			mainWindow.webContents.send('ch_mqtt', "error", err.message);
+		});
+
+		client.on('offline', function(){
+			var msg = "Cannot connect -> offline error.\n";
+			mainWindow.webContents.send('ch_mqtt', "error", msg);
 		});
 
 		client.on('packetsend', function (packet){

@@ -10,14 +10,15 @@ const mySerial = remote.require('./mySerial.js');
 const myParser = remote.require('./myParser.js');
 
 /* HTML elements */
-const button = document.getElementById('test_btn');
-const serialButton = document.getElementById('checkbox1');
+const updateComPortButton = document.getElementById('test_btn');
+const selectComPort = document.getElementById("sel_test");
+const selectBaudRate = document.getElementById("sel_baudrate");
+const startGetSerialDataToggle = document.getElementById('checkbox1');
+const serialConsole = document.getElementById('txtarea1');
+
 const connectButton = document.getElementById('connect_btn');
-const txtarea = document.getElementById('txtarea1');
-const txtarea2 = document.getElementById('txtarea2');
-const sel = document.getElementById("sel_test");
-const selBaudRate = document.getElementById("sel_baudrate");
-const transButton = document.getElementById('trans');
+const mqttConsole = document.getElementById('txtarea2');
+const transferSerial2MqttToggle = document.getElementById('trans');
 const testPubButton = document.getElementById('testpub_btn');
 
 /* Global variables */
@@ -62,36 +63,36 @@ function updateSerialPortsList(ports){
 function updateSerialConsole(identifier, msg){
 	switch(identifier){
 		case "open":
-			txtarea.value = "[Info] " + msg + "\n";
+			serialConsole.value = "[Info] " + msg + "\n";
 			break;
 		case "close":
-			txtarea.value += "\n[Info] " + msg;
+			serialConsole.value += "\n[Info] " + msg;
 			break;
 		case "error":
-			txtarea.value += "\n[Error] " + msg + "\n";
+			serialConsole.value += "\n[Error] " + msg + "\n";
 			break;
 		case "data":
-			txtarea.value += msg + "\n";
+			serialConsole.value += msg + "\n";
 			break;
 		case "clear":
-			txtarea.value = "";
+			serialConsole.value = "";
 			break;
 		default:
-			txtarea.value += msg + "\n";
+			serialConsole.value += msg + "\n";
 	}
 
 	/* 最大履歴の管理 */
 	const maxLength = 10000;
-	if (txtarea.value.length > maxLength){
-		var len = txtarea.value.length - maxLength;
-		var tmp = txtarea.value;
-		txtarea.value = tmp.slice(len);
+	if (serialConsole.value.length > maxLength){
+		var len = serialConsole.value.length - maxLength;
+		var tmp = serialConsole.value;
+		serialConsole.value = tmp.slice(len);
 	}
 	// スクロールを最下部に移動
-	txtarea.scrollTop = txtarea.scrollHeight;
+	serialConsole.scrollTop = serialConsole.scrollHeight;
 }
 
-function transferSerial2MQTT(serialMsg){
+function transferSerial2Mqtt(serialMsg){
 	if (myMqtt.isConnected() === false){
 		return;
 	}
@@ -109,72 +110,74 @@ function transferSerial2MQTT(serialMsg){
 function updateMqttConsole(identifier, msg){
 	switch (identifier) {
 		case "connect":
-			txtarea2.value = "[Info] " + msg + "\n";
+			mqttConsole.value = "[Info] " + msg + "\n";
+			transferSerial2MqttToggle.disabled = false;
 			break;
 		case "disconnect":
-			txtarea2.value += "\n[Info] " + msg;
+			mqttConsole.value += "\n[Info] " + msg;
 			break;
 		case "error":
-			txtarea2.value += "\n[Error] " + msg + "\n";
+			mqttConsole.value += "\n[Error] " + msg + "\n";
+			mqttDisconnect();
+			connectButton.checked = false;
 			break;
 		case "publish":
-			txtarea2.value += "[Info] " + msg + "\n";
+			mqttConsole.value += "[Info] " + msg + "\n";
 			break;
 		case "clear":
-			txtarea2.value = "";
+			mqttConsole.value = "";
 			break;
 		default:
-			txtarea2.value += msg + "\n";
+			mqttConsole.value += msg + "\n";
 	}
 
 	/* 最大履歴の管理 */
 	const maxLength = 10000;
-	if (txtarea2.value.length > maxLength) {
-		var len = txtarea2.value.length - maxLength;
-		var tmp = txtarea2.value;
-		txtarea2.value = tmp.slice(len);
+	if (mqttConsole.value.length > maxLength) {
+		var len = mqttConsole.value.length - maxLength;
+		var tmp = mqttConsole.value;
+		mqttConsole.value = tmp.slice(len);
 	}
 	// スクロールを最下部に移動
-	txtarea2.scrollTop = txtarea2.scrollHeight;
+	mqttConsole.scrollTop = mqttConsole.scrollHeight;
 }
 
 function openSerialPort(){
-	var portName = sel.options[sel.selectedIndex].value;
+	var portName = selectComPort.options[selectComPort.selectedIndex].value;
 	if (portName === 'None') {
-		serialButton.checked = false;
+		startGetSerialDataToggle.checked = false;
 		return;
 	}
 	// ポート選択と更新をロック
-	sel.disabled = true;
-	button.disabled = true;
-	selBaudRate.disabled = true;
+	selectComPort.disabled = true;
+	updateComPortButton.disabled = true;
+	selectBaudRate.disabled = true;
 
 	// シリアル接続開始
 	// TODO: ここに関数を追加（mySerialを呼び出し）
-	var baud = selBaudRate.options[selBaudRate.selectedIndex].value;
+	var baud = selectBaudRate.options[selectBaudRate.selectedIndex].value;
 	mySerial.attachSerialPort(portName, Number(baud));
 }
 
 function closeSerialPort(){
 	mySerial.detachSerialPort();
 	// ポート選択と更新をアンロック
-	sel.disabled = false;
-	button.disabled = false;
-	selBaudRate.disabled = false;
+	selectComPort.disabled = false;
+	updateComPortButton.disabled = false;
+	selectBaudRate.disabled = false;
 }
 
 function mqttConnect(){
 	// 入力もDisableにする
 	myMqtt.connect(broker.value, Number(port.value));
-	transButton.disabled = false;
 }
 
 function mqttDisconnect(){
 	myMqtt.disconnect();
-	transButton.checked = false;
+	transferSerial2MqttToggle.checked = false;
 	transferFlag = false;
-	transButton.checked = false;
-	transButton.disabled = true;
+	transferSerial2MqttToggle.checked = false;
+	transferSerial2MqttToggle.disabled = true;
 }
 
 
@@ -187,7 +190,7 @@ ipcRenderer.on("ch_serialport_show", function (evt, identifier, msg){
 	
 	// 転送するかチェック
 	// MQTT側へ送信
-	transferSerial2MQTT(msg);
+	transferSerial2Mqtt(msg);
 	
 });
 
@@ -209,11 +212,11 @@ connectButton.addEventListener('change', function (){
 });
 
 
-button.addEventListener('click', function(clickEvent){
+updateComPortButton.addEventListener('click', function(clickEvent){
 	mySerial.fetchSerialPortInfo();
 });
 
-serialButton.addEventListener('change', function(){
+startGetSerialDataToggle.addEventListener('change', function(){
 	if (this.checked){
 		openSerialPort();
 	}
@@ -222,7 +225,7 @@ serialButton.addEventListener('change', function(){
 	}
 });
 
-transButton.addEventListener('change', function (){
+ transferSerial2MqttToggle.addEventListener('change', function (){
 	if (this.checked){
 		transferFlag = true;
 	}

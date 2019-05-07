@@ -16,9 +16,12 @@ function createWindow() {
 	// Dev tool を自動起動
 	//mainWindow.webContents.openDevTools();
 
+	/*
+	// test
 	mainWindow.webContents.on('did-finish-load', () => {
 		mainWindow.webContents.send('channel-hoge', 'sendtest');
 	});
+	*/
 
 	mainWindow.on('closed', function(){
 		mainWindow = null;
