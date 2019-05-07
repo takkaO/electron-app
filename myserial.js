@@ -50,14 +50,21 @@ const serialUtils = {
 		//portの方がいい？
 		parser = sp.pipe(new Readline({delimiter: '\n'}));
 
-		parser.on('data', data => mainWindow.webContents.send('ch_serialport_show', data));
+		parser.on('data', data => mainWindow.webContents.send('ch_serialport_show', "data", String(data)));
 		
 		sp.on("open", function(){
-			mainWindow.webContents.send('ch_serialport_show', "open");
+			var msg = "Serial port open.";
+			mainWindow.webContents.send('ch_serialport_show', "open", msg);
 		});
 
 		sp.on("close", function(){
-			mainWindow.webContents.send('ch_serialport_show', "close");
+			var msg = "Serial port close.";
+			mainWindow.webContents.send('ch_serialport_show', "close", msg);
+		});
+
+		sp.on("error", function(err){
+			mainWindow.webContents.send('ch_serialport_show', "error", err.message);
+			//console.log(err.message);
 		});
 		
 	},

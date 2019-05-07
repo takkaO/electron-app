@@ -3,17 +3,16 @@
 var mqtt = require("mqtt");
 
 const {remote, BrowserWindow} = require('electron');
-var client;
+var client = null;
 var mainWindow = BrowserWindow.getFocusedWindow();
 
 const mqttUtils = {
 	testout: function (){
 		console.log("Hello");
-		client.publish("test", "test OK");
 		return "OKOK";
 	},
 
-	Connect: function (ip, port){
+	connect: function (ip, port){
 		var options = {
 			port: port,
 			host: ip,
@@ -23,51 +22,56 @@ const mqttUtils = {
 
 		client.on('connect', function (){
 			//console.log("connect ok");
-			mainWindow.webContents.send('ch_mqtt_clear');
-			var msg = "[Info] Successful connect to broker!\n";
+			var msg = "Successful connect to broker!\n";
 			msg += "Host     : " + options.host + "\n";
 			msg += "Port     : " + options.port + "\n";
 			msg += "Protocol : " + options.protocol + "\n";
 			msg += "----------\n";
-			mainWindow.webContents.send('ch_mqtt', msg);
+			mainWindow.webContents.send('ch_mqtt', "connect", msg);
 			//client.publish("test", "test OK");
 			//setInterval(mqttUtils.testout, 1000);
 		});
 
 		client.on('end', function (){
-			var msg = "[Info] Disconnect from broker.\n";
-			mainWindow.webContents.send('ch_mqtt', msg);
+			var msg = "Disconnect from broker.\n";
+			mainWindow.webContents.send('ch_mqtt', "disconnect", msg);
 		});
 
 		client.on('packetsend', function (packet){
 			//console.log(packet);
 			if (packet.cmd !== "publish"){
-				// publish以外はスルー
+				// publish以外（ping）はスルー
 				return;
 			}
-			var msg = "[Info] Published!\n";
+			var msg = "Published!\n";
 			msg += "QoS    : " + packet.qos + "\n";
 			msg += "Topic  : " + packet.topic + "\n";
 			msg += "Payload: " + packet.payload + "\n";
 			msg += "----------\n"
 			//console.log(BrowserWindow.getAllWindows());
-			mainWindow.webContents.send('ch_mqtt', msg);
+			mainWindow.webContents.send('ch_mqtt', "publish", msg);
 			//console.log(packet.payload);
 		});
 	},
 
-	Disconnect: function (){
-		console.log(client.connected);
+	disconnect: function (){
 		if (client.connected === true){
 			client.end();
+			client = null;
 		}
 	},
 
-	Publish: function (topic, payload){
+	publish: function (topic, payload){
+		if (client === null){
+			return;
+		}
 		client.publish(topic, payload);
 	},
 
-	IsConnected: function (){
+	isConnected: function (){
+		if (client === null){
+			return false;
+		}
 		return client.connected;
 	}
 };
