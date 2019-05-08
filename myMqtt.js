@@ -65,6 +65,9 @@ const mqttUtils = {
 	},
 
 	disconnect: function (){
+		if (client === null){
+			return;
+		}
 		if (client.connected === true){
 			client.end();
 			client = null;
