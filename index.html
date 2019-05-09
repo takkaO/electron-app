@@ -16,9 +16,10 @@
 
 <body>
 	<div class="parent-panel">
+		<!-- 左側のパネル -->
 		<div class="child-panel">
 			<div style="text-align: center">
-				<h3> Sensor Console </h3>
+				<h3> Serial Console </h3>
 			</div>
 
 			<div class="form-group" style="height: 50%">
@@ -38,19 +39,18 @@
 				</div>
 			</div>
 
-			<!--
-			<dev style="margin-left: 3%;">
-				<select id=sel_test style="height: 22pt; width:50%;"></select>
-				<button id="test_btn">更新</button>
-			</dev>
-			-->
-
 			<div class="input-group mb-3">
 				<div class="input-group-prepend">
 					<label class="input-group-text" for="inputGroupBaudRate">BaudRate</label>
 				</div>
 				<select class="custom-select" id="inputGroupBaudRate">
+					<option value="1200">1200 baud</option>
+					<option value="2400">2400 baud</option>
+					<option value="4800">4800 baud</option>
 					<option selected value="9600">9600 baud</option>
+					<option value="19200">19200 baud</option>
+					<option value="38400">38400 baud</option>
+					<option value="57600">57600 baud</option>
 					<option value="115200">115200 baud</option>
 				</select>
 			</div>
@@ -60,11 +60,11 @@
 				<label class="custom-control-label" for="serialSwitch">Open serial port</label>
 			</div>
 		</div>
-
+		<!-- 左側のパネルここまで -->
 
 		<div style="background:rgb(255, 255, 255); width:2px; height:0px;"></div>
 
-
+		<!-- 右側のパネル -->
 		<div class="child-panel">
 			<div style="text-align: center">
 				<h3> MQTT Console </h3>
@@ -101,6 +101,7 @@
 			</div>
 
 			<button type="button" class="btn btn-dark btn-sm" id="testPublishButton" style="margin-top: 10px; margin-left:auto; margin-right: 0px; display: block" disabled>Test Publish</button>
+			<!-- 右側のパネルここまで -->
 		</div>
 	</div>
 	

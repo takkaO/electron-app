@@ -14,13 +14,13 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/electron.cmd .",
+    "start": "./node_modules/.bin/electron .",
     "set_env": "npm install --vs2015 -g windows-build-tools",
     "mybuild": "./node_modules/.bin/electron-rebuild",
-    "pack_win": "./node_modules/.bin/electron-packager . --overwrite --out=release sample --platform=win32 --arch=x64",
-    "pack_mac": "./node_modules/.bin/electron-packager . --overwrite --out=release sample --platform=darwin --arch=x64",
-    "pack_x64": "./node_modules/.bin/electron-packager . --overwrite --out=release sample --platform=all --arch=x64",
-    "pack_all": "./node_modules/.bin/electron-packager . --overwrite --out=release sample --platform=all --arch=all"
+    "pack_win": "./node_modules/.bin/electron-packager . --overwrite --out=release SCMC --platform=win32 --arch=x64",
+    "pack_mac": "./node_modules/.bin/electron-packager . --overwrite --out=release SCMC --platform=darwin --arch=x64",
+    "pack_x64": "./node_modules/.bin/electron-packager . --overwrite --out=release SCMC --platform=all --arch=x64",
+    "pack_all": "./node_modules/.bin/electron-packager . --overwrite --out=release SCMC --platform=all --arch=all"
   },
   "keywords": [],
   "author": "",
