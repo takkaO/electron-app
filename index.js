@@ -1,9 +1,8 @@
 "use strict";
 
 /* Load Electron */
-const electron = require('electron');
-const ipcRenderer = electron.ipcRenderer;
-const remote = electron.remote;
+const ipcRenderer = window.ipcRenderer;
+const remote = window.remote;
 /* Load my modules */
 const myMqtt = remote.require('./myMqtt.js');
 const mySerial = remote.require('./mySerial.js');
@@ -184,14 +183,12 @@ function mqttDisconnect(){
 /***********
  * イベント処理
 ************ */
-
 ipcRenderer.on("ch_serialport_show", function (evt, identifier, msg){
 	updateSerialConsole(identifier, msg);
 	
 	// 転送するかチェック
 	// MQTT側へ送信
 	transferSerial2Mqtt(msg);
-	
 });
 
 ipcRenderer.on("ch_mqtt", function (evt, identifier, msg){
@@ -239,14 +236,15 @@ testPubButton.addEventListener("click", function(){
 });
 
 // window読み込み完了時に呼び出し
-window.onload = function (){
+window.addEventListener("load", function() {
 	initialize();
 	// シリアルポート情報を初期化
 	mySerial.fetchSerialPortInfo();	
-}
+});
 
-window.onbeforeunload = function (){
-	myMqtt.disconnect();
+// window終了前に実行
+window.addEventListener("beforeunload", function(){
 	// シリアルポートを明示的に開放
 	mySerial.detachSerialPort();
-}
+});
+

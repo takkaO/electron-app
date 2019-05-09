@@ -9,7 +9,11 @@ function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
-		webPreferences: {nodeIntegration: true}
+		webPreferences: {
+			nodeIntegration: false,	// レンダ側でもNodejsのAPIを使用するか否か
+			contextIsolation: false,	// レンダとメインのglobal（window）を分離するか否か
+			preload: __dirname + "/preload.js"
+		}
 	});
 	
 	mainWindow.loadFile("index.html");
@@ -24,7 +28,7 @@ function createWindow() {
 	*/
 
 	mainWindow.on('closed', function(){
-		mainWindow = null;
+		//mainWindow = null;
 	});
 };
 
