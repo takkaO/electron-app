@@ -1,4 +1,4 @@
-# Electron-app
+# SCMC-app
 
 ### Environment
 ```
@@ -11,3 +11,5 @@ npm run mybuild
 ```
 npm start
 ```
+
+![main view](https://raw.githubusercontent.com/takkaO/SCMC-app/images/main_view.png "Main View")
