@@ -39,7 +39,7 @@ const mqttUtils = {
 		});
 
 		client.on('error', function (err){
-			mainWindow.webContents.send('ch_mqtt', "error", err.message);
+			mainWindow.webContents.send('ch_mqtt', "error", err.message + "\n");
 		});
 
 		client.on('offline', function(){

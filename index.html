@@ -2,51 +2,105 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title> Electron App </title>
+	<title> SCMC App </title>
+
+	<!-- Bootstrapの読み込み -->
+	<script type="text/javascript" src="./scripts/jquery.js"></script>
+	<script type="text/javascript" src="./scripts/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+
+	<!-- ユーザCSSの読み込み -->
+	<link rel="stylesheet" type="text/css" href="./css/index.css">
+	
 </head>
 
 <body>
-	<div style="text-align: center">
-		<h2> Display Application </h2>
-	</div>
-	<div style="background: lavender; display: table; width: 100%">
-		<div style="background: skyblue; display: table-cell; width: 50%;">
+	<div class="parent-panel">
+		<div class="child-panel">
 			<div style="text-align: center">
 				<h3> Sensor Console </h3>
 			</div>
-			<!-- font -->
-			<textarea style="resize: none; width: 90%; display: block; margin-left: auto; margin-right: auto;" id="txtarea1" rows="15"  readonly>test</textarea>
+
+			<div class="form-group" style="height: 50%">
+				<textarea class="form-control" id="serialConsole" readonly>
+				</textarea>
+			</div>
+
+
+			<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupComPort">ComPort</label>
+				</div>
+				<select class="custom-select" id="inputGroupComPort">
+				</select>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" id="updateComPortListButton" style="background: #e0e0e0;">Update</button>
+				</div>
+			</div>
+
+			<!--
 			<dev style="margin-left: 3%;">
 				<select id=sel_test style="height: 22pt; width:50%;"></select>
 				<button id="test_btn">更新</button>
 			</dev>
-			<select id=sel_baudrate style="height: 22pt; width:50%;">
-				<option value="9600">9600 baud</option>
-				<option value="115200">115200 baud</option>
-			</select>
-			<div style="width: 100%; margin-right: 0;">
-				<label style="width: 20%; margin-left: 5%">データ取得開始</label>
-				<input type="checkbox" id="checkbox1">
+			-->
+
+			<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupBaudRate">BaudRate</label>
+				</div>
+				<select class="custom-select" id="inputGroupBaudRate">
+					<option selected value="9600">9600 baud</option>
+					<option value="115200">115200 baud</option>
+				</select>
+			</div>
+
+			<div class="custom-control custom-switch">
+				<input type="checkbox" class="custom-control-input" id="serialSwitch">
+				<label class="custom-control-label" for="serialSwitch">Open serial port</label>
 			</div>
 		</div>
 
-		<div style="background: tomato; display: table-cell; width: 50%; ">
+
+		<div style="background:rgb(255, 255, 255); width:2px; height:0px;"></div>
+
+
+		<div class="child-panel">
 			<div style="text-align: center">
 				<h3> MQTT Console </h3>
 			</div>
-			<textarea style="resize: none; width: 90%; display: block; margin-left: auto; margin-right: auto;" id="txtarea2" rows="15"  readonly>test</textarea>
-			<div style="width: 100%; margin-right: 0;">
-				<label style="width: 20%; margin-left: 5%">Broker:</label> <input id="broker" type="text" style="width: 60%; margin-right: 5%" value="localhost">
-			</div>
-			<div style="width: 100%; margin-right: 0;">
-				<label style="width: 20%; margin-left: 5%">Port:</label> <input id="port" type="text" style="width: 60%; margin-right: 5%" value="1883">
-			</div>
-			<label style="width: 20%; margin-left: 5%">コネクト</label>
-			<input id="connect_btn" type="checkbox">
-			<label style="width: 20%; margin-left: 5%">転送開始</label>
-			<input id="trans" type="checkbox" disabled="true">
 
-			<button id="testpub_btn">test pub</button>
+			<div class="form-group" style="height: 50%;">
+				<textarea class="form-control" id="mqttConsole" readonly>
+				</textarea>
+			</div>
+
+
+			<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text">Broker</span>
+				</div>
+				<input type="text" class="form-control" placeholder="Address to broker server" aria-describedby="inputBrokerName" id="inputBrokerName">
+			</div>
+
+			<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text">Port</span>
+				</div>
+				<input type="text" class="form-control" placeholder="Broker port number" aria-describedby="inputPortNumber" id="inputPortNumber" value="1883">
+			</div>
+
+			<div class="custom-control custom-switch">
+				<input type="checkbox" class="custom-control-input" id="mqttSwitch">
+				<label class="custom-control-label" for="mqttSwitch">Connect MQTT broker</label>
+			</div>
+
+			<div class="custom-control custom-switch">
+				<input type="checkbox" class="custom-control-input" id="transferSwitch" disabled>
+				<label class="custom-control-label" for="transferSwitch">Transfer serial data to MQTT</label>
+			</div>
+
+			<button type="button" class="btn btn-dark btn-sm" id="testPublishButton" style="margin-top: 10px; margin-left:auto; margin-right: 0px; display: block" disabled>Test Publish</button>
 		</div>
 	</div>
 	

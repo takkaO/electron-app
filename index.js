@@ -4,21 +4,21 @@
 const ipcRenderer = window.ipcRenderer;
 const remote = window.remote;
 /* Load my modules */
-const myMqtt = remote.require('./myMqtt.js');
-const mySerial = remote.require('./mySerial.js');
-const myParser = remote.require('./myParser.js');
+const myMqtt = remote.require('./src/myMqtt.js');
+const mySerial = remote.require('./src/mySerial.js');
+const myParser = remote.require('./src/myParser.js');
 
 /* HTML elements */
-const updateComPortButton = document.getElementById('test_btn');
-const selectComPort = document.getElementById("sel_test");
-const selectBaudRate = document.getElementById("sel_baudrate");
-const startGetSerialDataToggle = document.getElementById('checkbox1');
-const serialConsole = document.getElementById('txtarea1');
+const updateComPortButton = document.getElementById('updateComPortListButton');
+const selectComPort = document.getElementById("inputGroupComPort");
+const selectBaudRate = document.getElementById("inputGroupBaudRate");
+const startGetSerialDataToggle = document.getElementById('serialSwitch');
+const serialConsole = document.getElementById('serialConsole');
 
-const connectButton = document.getElementById('connect_btn');
-const mqttConsole = document.getElementById('txtarea2');
-const transferSerial2MqttToggle = document.getElementById('trans');
-const testPubButton = document.getElementById('testpub_btn');
+const connectButton = document.getElementById('mqttSwitch');
+const mqttConsole = document.getElementById('mqttConsole');
+const transferSerial2MqttToggle = document.getElementById('transferSwitch');
+const testPubButton = document.getElementById('testPublishButton');
 
 /* Global variables */
 var transferFlag;
@@ -26,24 +26,26 @@ var transferFlag;
 function initialize(){
 	transferFlag = false;
 	initSerialPortsList();
+
+	mqttConsole.value = "MQTT Console Ready...";
+	serialConsole.value = "Serial Console Ready...";
 }
 
 function initSerialPortsList(){
 	// 選択ボックスをクリア
-	var selects = document.getElementById("sel_test");
-	var length = selects.options.length;
+	var length = selectComPort.options.length;
 	for (var i = length - 1; 0 <= i; i--) {
 		// 逆順でないとうまくいかないので注意
-		selects.options[i].selected = false;
-		selects.options[i] = null;
+		selectComPort.options[i].selected = false;
+		selectComPort.options[i] = null;
 	}
 	// クリア完了
 	// 未選択の選択肢を追加
 	let op = document.createElement("option");
 	op.value = "None";
 	op.text = "None";
-	document.getElementById("sel_test").appendChild(op);
-	selects.options[0].selected = true;	// Noneを選択状態に
+	selectComPort.appendChild(op);
+	selectComPort.options[0].selected = true;	// Noneを選択状態に
 }
 
 function updateSerialPortsList(ports){
@@ -55,11 +57,14 @@ function updateSerialPortsList(ports){
 		let op = document.createElement("option");
 		op.value = port.comName;
 		op.text = port.manufacturer + " (" + port.comName + ")";
-		document.getElementById("sel_test").appendChild(op);
+		selectComPort.appendChild(op);
 	});
 }
 
 function updateSerialConsole(identifier, msg){
+	if(serialConsole.value === null){
+		serialConsole.value = "";
+	}
 	switch(identifier){
 		case "open":
 			serialConsole.value = "[Info] " + msg + "\n";
@@ -68,7 +73,7 @@ function updateSerialConsole(identifier, msg){
 			serialConsole.value += "\n[Info] " + msg;
 			break;
 		case "error":
-			serialConsole.value += "\n[Error] " + msg + "\n";
+			serialConsole.value += "\n[Error] " + msg;
 			break;
 		case "data":
 			serialConsole.value += msg + "\n";
@@ -107,21 +112,25 @@ function transferSerial2Mqtt(serialMsg){
 }
 
 function updateMqttConsole(identifier, msg){
+	if (mqttConsole.value === null) {
+		mqttConsole.value = "";
+	}
 	switch (identifier) {
 		case "connect":
-			mqttConsole.value = "[Info] " + msg + "\n";
+			mqttConsole.value = "[Info] " + msg;
 			transferSerial2MqttToggle.disabled = false;
+			testPubButton.disabled = false;
 			break;
 		case "disconnect":
 			mqttConsole.value += "\n[Info] " + msg;
 			break;
 		case "error":
-			mqttConsole.value += "\n[Error] " + msg + "\n";
+			mqttConsole.value += "\n[Error] " + msg;
 			mqttDisconnect();
 			connectButton.checked = false;
 			break;
 		case "publish":
-			mqttConsole.value += "[Info] " + msg + "\n";
+			mqttConsole.value += "[Info] " + msg;
 			break;
 		case "clear":
 			mqttConsole.value = "";
@@ -153,7 +162,6 @@ function openSerialPort(){
 	selectBaudRate.disabled = true;
 
 	// シリアル接続開始
-	// TODO: ここに関数を追加（mySerialを呼び出し）
 	var baud = selectBaudRate.options[selectBaudRate.selectedIndex].value;
 	mySerial.attachSerialPort(portName, Number(baud));
 }
@@ -167,8 +175,22 @@ function closeSerialPort(){
 }
 
 function mqttConnect(){
-	// 入力もDisableにする
-	myMqtt.connect(broker.value, Number(port.value));
+	var error_msg = "Invalid port number!\n"
+	if (isNaN(inputPortNumber.value)){
+		updateMqttConsole("error", error_msg);
+		return;
+	}
+	var port = Number(inputPortNumber.value);
+	if (port < 0 || 65535 < port){
+		updateMqttConsole("error", error_msg);
+		return;
+	}
+
+	// 入力を制限
+	inputBrokerName.disabled = true;
+	inputPortNumber.disabled = true;
+
+	myMqtt.connect(inputBrokerName.value, port);
 }
 
 function mqttDisconnect(){
@@ -177,6 +199,11 @@ function mqttDisconnect(){
 	transferFlag = false;
 	transferSerial2MqttToggle.checked = false;
 	transferSerial2MqttToggle.disabled = true;
+
+	// 入力制限を解除
+	inputBrokerName.disabled = false;
+	inputPortNumber.disabled = false;
+	testPubButton.disabled = true;
 }
 
 
@@ -232,7 +259,9 @@ startGetSerialDataToggle.addEventListener('change', function(){
 });
 
 testPubButton.addEventListener("click", function(){
-	myMqtt.publish("test", "testPubOK");
+	if (myMqtt.isConnected){
+		myMqtt.publish("test", "testPubOK");
+	}
 });
 
 // window読み込み完了時に呼び出し

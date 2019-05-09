@@ -53,7 +53,7 @@ const serialUtils = {
 		});
 
 		port.on("error", function(err){
-			mainWindow.webContents.send('ch_serialport_show', "error", err.message);
+			mainWindow.webContents.send('ch_serialport_show', "error", err.message + "\n");
 		});
 		
 	},
