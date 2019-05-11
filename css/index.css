@@ -10,12 +10,26 @@ html, body {
 	border-collapse: collapse;
 }
 
-.child-panel{
+.child-panel {
 	background: rgb(155, 155, 155); 
 	display: table-cell; 
 	width: 50%; 
 	padding: 10px; 
 	height: 100%;
+}
+
+.title {
+	text-align: center;
+}
+
+.separator {
+	background:rgb(255, 255, 255);
+	width:2px;
+	height:0px;
+}
+
+.child-panel > .form-group {
+	height: 50%;
 }
 
 .form-group > .form-control {
@@ -24,10 +38,22 @@ html, body {
 	height: 100%;
 }
 
-.input-group > .form-control{
+.btn.btn-outline-secondary {
+	background: #e0e0e0;
 	color: rgb(15, 15, 15);
 }
 
-.custom-select, .input-group-append > .btn{
+.input-group > .form-control {
 	color: rgb(15, 15, 15);
+}
+
+.custom-select {
+	color: rgb(15, 15, 15);
+}
+
+.btn.btn-dark.btn-sm {
+	margin-top: 10px;
+	margin-left:auto;
+	margin-right: 0px; 
+	display: block;
 }

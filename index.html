@@ -12,17 +12,21 @@
 	<!-- ユーザCSSの読み込み -->
 	<link rel="stylesheet" type="text/css" href="./css/index.css">
 	
+	<!-- コンテンツ・セキュリティ・ポリシーを設定 -->
+	<meta http-equiv="Content-Security-Policy" 
+	content="default-src 'self';
+	img-src 'self' data: image/svg+xml;">
 </head>
 
 <body>
 	<div class="parent-panel">
 		<!-- 左側のパネル -->
 		<div class="child-panel">
-			<div style="text-align: center">
+			<div class="title">
 				<h3> Serial Console </h3>
 			</div>
 
-			<div class="form-group" style="height: 50%">
+			<div class="form-group">
 				<textarea class="form-control" id="serialConsole" readonly>
 				</textarea>
 			</div>
@@ -35,7 +39,7 @@
 				<select class="custom-select" id="inputGroupComPort">
 				</select>
 				<div class="input-group-append">
-					<button class="btn btn-outline-secondary" type="button" id="updateComPortListButton" style="background: #e0e0e0;">Update</button>
+					<button class="btn btn-outline-secondary" type="button" id="updateComPortListButton">Update</button>
 				</div>
 			</div>
 
@@ -62,15 +66,15 @@
 		</div>
 		<!-- 左側のパネルここまで -->
 
-		<div style="background:rgb(255, 255, 255); width:2px; height:0px;"></div>
+		<div class="separator"></div>
 
 		<!-- 右側のパネル -->
 		<div class="child-panel">
-			<div style="text-align: center">
+			<div class="title">
 				<h3> MQTT Console </h3>
 			</div>
 
-			<div class="form-group" style="height: 50%;">
+			<div class="form-group">
 				<textarea class="form-control" id="mqttConsole" readonly>
 				</textarea>
 			</div>
@@ -100,7 +104,7 @@
 				<label class="custom-control-label" for="transferSwitch">Transfer serial data to MQTT</label>
 			</div>
 
-			<button type="button" class="btn btn-dark btn-sm" id="testPublishButton" style="margin-top: 10px; margin-left:auto; margin-right: 0px; display: block" disabled>Test Publish</button>
+			<button type="button" class="btn btn-dark btn-sm" id="testPublishButton" disabled>Test Publish</button>
 			<!-- 右側のパネルここまで -->
 		</div>
 	</div>
