@@ -17,10 +17,10 @@
     "start": "./node_modules/.bin/electron .",
     "set_env": "npm install --vs2015 -g windows-build-tools",
     "mybuild": "./node_modules/.bin/electron-rebuild",
-    "pack_win": "./node_modules/.bin/electron-packager . --overwrite --out=release SCMC --platform=win32 --arch=x64",
-    "pack_mac": "./node_modules/.bin/electron-packager . --overwrite --out=release SCMC --platform=darwin --arch=x64",
-    "pack_x64": "./node_modules/.bin/electron-packager . --overwrite --out=release SCMC --platform=all --arch=x64",
-    "pack_all": "./node_modules/.bin/electron-packager . --overwrite --out=release SCMC --platform=all --arch=all"
+    "pack_win": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --ignore='/.gitignore' --ignore='/.README.md' --platform=win32 --arch=x64",
+    "pack_mac": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --ignore='/.gitignore' --ignore='/.README.md' --platform=darwin --arch=x64",
+    "pack_x64": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --ignore='/.gitignore' --ignore='/.README.md' --platform=all --arch=x64",
+    "pack_all": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --ignore='/.gitignore' --ignore='/.README.md' --platform=all --arch=all"
   },
   "keywords": [],
   "author": "",
