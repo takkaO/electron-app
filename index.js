@@ -71,9 +71,15 @@ function updateSerialConsole(identifier, msg){
 			break;
 		case "close":
 			serialConsole.value += "\n[Info] " + msg;
+			if (startGetSerialDataToggle.checked === true){
+				startGetSerialDataToggle.checked = false;
+				closeSerialPort();
+			}
 			break;
 		case "error":
 			serialConsole.value += "\n[Error] " + msg;
+			startGetSerialDataToggle.checked = false;
+			closeSerialPort();
 			break;
 		case "data":
 			serialConsole.value += msg + "\n";
@@ -123,11 +129,15 @@ function updateMqttConsole(identifier, msg){
 			break;
 		case "disconnect":
 			mqttConsole.value += "\n[Info] " + msg;
+			if (connectButton.checked === true){
+				connectButton.checked = false;
+				mqttDisconnect();
+			}
 			break;
 		case "error":
 			mqttConsole.value += "\n[Error] " + msg;
-			mqttDisconnect();
 			connectButton.checked = false;
+			mqttDisconnect();
 			break;
 		case "publish":
 			mqttConsole.value += "[Info] " + msg;
