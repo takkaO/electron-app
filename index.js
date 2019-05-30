@@ -6,7 +6,7 @@ const remote = window.remote;
 /* Load my modules */
 const myMqtt = remote.require('./src/myMqtt.js');
 const mySerial = remote.require('./src/mySerial.js');
-const myParser = remote.require('./src/myParser.js');
+var myParser = remote.require('./src/myParser.js');
 
 /* HTML elements */
 const updateComPortButton = document.getElementById('updateComPortListButton');
@@ -18,6 +18,8 @@ const serialConsole = document.getElementById('serialConsole');
 const connectButton = document.getElementById('mqttSwitch');
 const mqttConsole = document.getElementById('mqttConsole');
 const transferSerial2MqttToggle = document.getElementById('transferSwitch');
+const selectParserButton = document.getElementById('selectParserListButton');
+const selectParser = document.getElementById("inputGroupParser");
 const testPubButton = document.getElementById('testPublishButton');
 
 /* Global variables */
@@ -26,9 +28,10 @@ var transferFlag;
 function initialize(){
 	transferFlag = false;
 	initSerialPortsList();
+	initParserList();
 
-	mqttConsole.value = "MQTT Console Ready...";
-	serialConsole.value = "Serial Console Ready...";
+	mqttConsole.value = "MQTT Console Ready...\n";
+	serialConsole.value = "Serial Console Ready...\n";
 }
 
 function initSerialPortsList(){
@@ -46,6 +49,23 @@ function initSerialPortsList(){
 	op.text = "None";
 	selectComPort.appendChild(op);
 	selectComPort.options[0].selected = true;	// Noneを選択状態に
+}
+
+function initParserList() {
+	// 選択ボックスをクリア
+	var length = selectParser.options.length;
+	for (var i = length - 1; 0 <= i; i--) {
+		// 逆順でないとうまくいかないので注意
+		selectParser.options[i].selected = false;
+		selectParser.options[i] = null;
+	}
+	// クリア完了
+	// 未選択の選択肢を追加
+	let op = document.createElement("option");
+	op.value = "./src/myParser.js";
+	op.text = "Default (CO2 Hiroshima Sensor)";
+	selectParser.appendChild(op);
+	selectParser.options[0].selected = true;	// Noneを選択状態に
 }
 
 function updateSerialPortsList(ports){
@@ -207,6 +227,8 @@ function mqttDisconnect(){
 	myMqtt.disconnect();
 	transferSerial2MqttToggle.checked = false;
 	transferFlag = false;
+	selectParser.disabled = false;
+	selectParserButton.disabled = false;
 	transferSerial2MqttToggle.checked = false;
 	transferSerial2MqttToggle.disabled = true;
 
@@ -216,10 +238,54 @@ function mqttDisconnect(){
 	testPubButton.disabled = true;
 }
 
+function loadParserFile(fpath){
+	var tmp = myParser;
+	myParser = remote.require(fpath);
+	try{
+		//console.log("checking...")
+		myParser.parse("test message");
+
+		var length = selectParser.options.length;
+		for(var i=0; i<length; i++){
+			if (selectParser.options[i].value === fpath){
+				//console.log("Already loaded!")
+				throw "Parser already loaded"
+			}
+		}
+	}
+	catch (e) {
+		//console.log("error");
+		updateMqttConsole("error", "Error to load parser\n");
+		myParser = tmp;
+		return;
+	}
+
+	let op = document.createElement("option");
+	op.value = fpath;
+	op.text = fpath;
+	selectParser.appendChild(op);
+
+	var length = selectParser.options.length;
+	selectParser.options[length - 1].selected = true;
+	var msg = "[Info] Load new parser\n\t-> " + fpath;
+	updateMqttConsole("load parser", msg);
+}
+
 
 /***********
  * イベント処理
 ************ */
+function showOpenParserFileDialog() {
+	const input = document.createElement('input');
+	input.type = 'file';
+	input.accept = '.js';
+	input.onchange = function (event) {
+		loadParserFile(event.target.files[0].path);
+	};	
+	input.click();
+};
+
+
 ipcRenderer.on("ch_serialport_show", function (evt, identifier, msg){
 	updateSerialConsole(identifier, msg);
 	
@@ -245,6 +311,17 @@ connectButton.addEventListener('change', function (){
 	}
 });
 
+selectParserButton.addEventListener('click', function(){
+	showOpenParserFileDialog();
+});
+
+selectParser.addEventListener('change', function(){
+	var fpath = selectParser.options[selectParser.selectedIndex].value;
+	var msg = "[Info] Change parser\n\t-> " + fpath;
+	updateMqttConsole("load parser", msg);
+
+	myParser = remote.require(fpath);
+});
 
 updateComPortButton.addEventListener('click', function(clickEvent){
 	mySerial.fetchSerialPortInfo();
@@ -262,9 +339,13 @@ startGetSerialDataToggle.addEventListener('change', function(){
  transferSerial2MqttToggle.addEventListener('change', function (){
 	if (this.checked){
 		transferFlag = true;
+		selectParser.disabled = true;
+		selectParserButton.disabled = true;
 	}
 	else{
 		transferFlag = false;
+		selectParser.disabled = false;
+		selectParserButton.disabled = false;
 	}
 });
 

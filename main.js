@@ -8,7 +8,7 @@ var mainWindow = null;
 function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 800,
-		height: 600,
+		height: 700,
 		webPreferences: {
 			nodeIntegration: false,	// レンダ側でもNodejsのAPIを使用するか否か
 			contextIsolation: false,	// レンダとメインのglobal（window）を分離するか否か

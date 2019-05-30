@@ -1,6 +1,6 @@
 {
   "name": "electron-app",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "main": "main.js",
   "dependencies": {
     "mqtt": "^2.18.8",
@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "asar": "^2.0.1",
+    "copyfiles": "^2.1.0",
     "electron": "^5.0.1",
     "electron-packager": "^13.1.1",
     "electron-rebuild": "^1.8.4"
@@ -17,13 +18,11 @@
     "start": "./node_modules/.bin/electron .",
     "set_env": "npm install --vs2015 -g windows-build-tools",
     "mybuild": "./node_modules/.bin/electron-rebuild",
-    "pack_win": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --ignore='/.gitignore' --ignore='/.README.md' --platform=win32 --arch=x64",
-    "pack_mac": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --ignore='/.gitignore' --ignore='/.README.md' --platform=darwin --arch=x64",
-    "pack_x64": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --ignore='/.gitignore' --ignore='/.README.md' --platform=all --arch=x64",
-    "pack_all": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --ignore='/.gitignore' --ignore='/.README.md' --platform=all --arch=all"
+    "pack_win": "./node_modules/.bin/electron-packager . --overwrite  --asar --out=release SCMC --platform=win32 --arch=x64 && copyfiles -f \"./parsers/*.js\" \"./release/SCMC-win32-x64/parsers\"",
+    "pack_mac": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --platform=darwin --arch=x64 && copyfiles -f \"./parsers/*.js\" \"./release/SCMC-darwin-x64/parsers\"" 
   },
   "keywords": [],
-  "author": "",
+  "author": "takkaO",
   "license": "ISC",
   "description": ""
 }

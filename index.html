@@ -94,6 +94,17 @@
 				<input type="text" class="form-control" placeholder="Broker port number" aria-describedby="inputPortNumber" id="inputPortNumber" value="1883">
 			</div>
 
+			<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupParser">Parser</label>
+				</div>
+				<select class="custom-select" id="inputGroupParser">
+				</select>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" id="selectParserListButton">...</button>
+				</div>
+			</div>
+
 			<div class="custom-control custom-switch">
 				<input type="checkbox" class="custom-control-input" id="mqttSwitch">
 				<label class="custom-control-label" for="mqttSwitch">Connect MQTT broker</label>
