@@ -9,9 +9,9 @@
   "devDependencies": {
     "asar": "^2.0.1",
     "copyfiles": "^2.1.0",
-    "electron": "^5.0.1",
+    "electron": "^5.0.4",
     "electron-packager": "^13.1.1",
-    "electron-rebuild": "^1.8.4"
+    "electron-rebuild": "^1.8.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,7 +19,7 @@
     "set_env": "npm install --vs2015 -g windows-build-tools",
     "mybuild": "./node_modules/.bin/electron-rebuild",
     "pack_win": "./node_modules/.bin/electron-packager . --overwrite  --asar --out=release SCMC --platform=win32 --arch=x64 && copyfiles -f \"./parsers/*.js\" \"./release/SCMC-win32-x64/parsers\"",
-    "pack_mac": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --platform=darwin --arch=x64 && copyfiles -f \"./parsers/*.js\" \"./release/SCMC-darwin-x64/parsers\"" 
+    "pack_mac": "./node_modules/.bin/electron-packager . --overwrite --asar --out=release SCMC --platform=darwin --arch=x64 && copyfiles -f \"./parsers/*.js\" \"./release/SCMC-darwin-x64/parsers\""
   },
   "keywords": [],
   "author": "takkaO",
